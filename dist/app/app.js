@@ -14,7 +14,7 @@ var require_database = __commonJS({
       useNewUrlParser: true,
       useUnifiedTopology: true
     }).then(
-      () => console.log("Conectado ao mongo!")
+      () => console.log("Conected!")
     ).catch((err) => console.error(err));
   }
 });
@@ -463,5 +463,6 @@ app.use("/", userRoutes);
 app.use("/", solicitationRoutes);
 app.use("/", forgetPassworRoutes);
 app.listen({
+  host: "0.0.0.0",
   port: process.env.PORT ? Number(process.env.PORT) : 3333
 });
