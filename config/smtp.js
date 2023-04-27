@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const USER= process.env.EMAIL;
 const PASS= process.env.PASS;
 const smtp={

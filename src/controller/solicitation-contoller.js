@@ -12,6 +12,11 @@ const userModel = require("../models/users");
 
 router.post("/solicitation", async (req, res) => {
   try {
+
+    console.log("teste: ")
+    console.log(smtpConfig.user);
+    console.log(smtpConfig.pass);
+
     let { time, solicitation, date, professional, user } = req.body;
 
     let newdate= date.split("-");
@@ -28,8 +33,6 @@ router.post("/solicitation", async (req, res) => {
         i<2?date += newdate[i]+"-": date += newdate[i];
      
     }
-
-    console.log(date);
 
 
     const request = await solicitationModel
