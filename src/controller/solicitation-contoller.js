@@ -64,6 +64,13 @@ router.post("/solicitation", async (req, res) => {
 
       const responseUser = await getUser(user);
 
+     
+
+      const barbershop = smtpConfig.user;
+
+  
+      res.status(200).send();
+
       const transporter = await nodeMailer.createTransport({
         host: smtpConfig.host,
         port: smtpConfig.port,
@@ -74,17 +81,14 @@ router.post("/solicitation", async (req, res) => {
         },
       });
 
-      const barbershop = smtpConfig.user;
-       await transporter.sendMail({
-         text: `Oi, ${responseUser.name} tudo bem? Estamos passando para te notificar que deu tudo certo ao marcar seu horário! Te aguardamos às ${order.time}, do dia ${order.date}.\nSegue os dados do agendamento: O que você irá fazer: ${order.solicitation}\nProfissional escolhido: ${order.professional}`,
-         subject: "Agendamento",
-         from: barbershop,
-         to: `${responseUser.email}`,
-       });
-
-      res.status(200).json({ msg: "Deu certo" });
+      await transporter.sendMail({
+        text: `Oi, ${responseUser.name} tudo bem? Estamos passando para te notificar que deu tudo certo ao marcar seu horário! Te aguardamos às ${order.time}, do dia ${order.date}.\nSegue os dados do agendamento: O que você irá fazer: ${order.solicitation}\nProfissional escolhido: ${order.professional}`,
+        subject: "Agendamento",
+        from: barbershop,
+        to: `${responseUser.email}`,
+      });
     } else {
-      // request;
+   
       throw new Error(
         "Horáio indisponível. Tente o mesmo horário com outro profissional ou selecione um horário diferente"
       );
@@ -124,10 +128,15 @@ router.post("/login/solicitation", async(req, res)=>{
 
   const resul= await solicitationModel.find().where("date").equals(date);
 
-  let listTime=[];
+
+  let listTime={
+    hours:[],
+    professional:[]
+  };
 
   for (let i = 0; i < resul.length; i++) {
-     listTime[i] =resul[i].time;
+     listTime.hours[i] =resul[i].time;
+     listTime.professional[i]=resul[i].professional;
   }
 
   res.status(200).json(listTime);

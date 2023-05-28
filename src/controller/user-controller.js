@@ -35,19 +35,6 @@ router.post("/register", async (req, res) => {
     res.status(422).json(error.message);
   }
 
-  if (!checkedUser) {
-    const transporter = await nodeMailer.createTransport({
-      host: smtpConfig.host,
-      port: smtpConfig.port,
-      secure: false,
-      auth: {
-        user: smtpConfig.user,
-        pass: smtpConfig.pass,
-      }
-    });
-
-    
-
     async function sendEmail(user) {
       const barbershop = smtpConfig.user;
       await transporter.sendMail({
@@ -59,9 +46,24 @@ router.post("/register", async (req, res) => {
     }
 
     await user.save();
-    const response= await sendEmail(user);
+    
 
     res.status(200).json(user);
+
+    if (!checkedUser) {
+      const transporter = await nodeMailer.createTransport({
+        host: smtpConfig.host,
+        port: smtpConfig.port,
+        secure: false,
+        auth: {
+          user: smtpConfig.user,
+          pass: smtpConfig.pass,
+        }
+      });
+
+    await sendEmail(user);
+
+
   }
 });
 
@@ -82,7 +84,7 @@ router.post("/login", async (req, res) => {
     } else {
       const token = jwt.sign({}, secret, { expiresIn: "10d" });
 
-      console.log("Chamando");
+
 
       res.status(200).json({ id:user.id, name:user.name, token: token });
       
@@ -95,7 +97,6 @@ router.post("/login", async (req, res) => {
 router.post("/authenticate", async (req, res) => {
   const withAuthentication = require("../app/middlewars/authentication");
 
-  console.log("Testando");
 
   res.status(500);
 });

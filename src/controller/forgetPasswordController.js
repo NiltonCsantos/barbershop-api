@@ -27,25 +27,11 @@ router.post("/login/forgetpassword", async (req, res) => {
 
     console.log("email: " + email);
 
-    if (checkedEmail) {
-      const transporter = await nodeMailer.createTransport({
-        host: smtpConfig.host,
-        port: smtpConfig.port,
-        secure: false,
-        auth: {
-          user: smtpConfig.user,
-          pass: smtpConfig.pass,
-        },
-      });
+ 
 
       const barbershop = smtpConfig.user;
       const rand = stringRandom(8);
-      await transporter.sendMail({
-        text: `Oi, ${checkedEmail.name} tudo bem? Esse é seu código de redefinição:\n \n \n \t \t \t ${rand}`,
-        subject: "Redifinição de senha",
-        from: barbershop,
-        to: `${checkedEmail.email}`,
-      });
+      
 
       const update = { $set: { code: rand } }
       const filter= {email: checkedEmail.email}
@@ -65,6 +51,25 @@ router.post("/login/forgetpassword", async (req, res) => {
       }
 
       res.status(200).json(checkedEmail.id);
+
+      if (checkedEmail) {
+        const transporter = await nodeMailer.createTransport({
+          host: smtpConfig.host,
+          port: smtpConfig.port,
+          secure: false,
+          auth: {
+            user: smtpConfig.user,
+            pass: smtpConfig.pass,
+          },
+        });
+
+      await transporter.sendMail({
+        text: `Oi, ${checkedEmail.name} tudo bem? Esse é seu código de redefinição:\n \n \n \t \t \t ${rand}`,
+        subject: "Redifinição de senha",
+        from: barbershop,
+        to: `${checkedEmail.email}`,
+      });
+
     } else {
       throw new Error("Usuário não encontrado");
     }
@@ -117,6 +122,12 @@ try {
 
   await userModel.updateOne(filter,update);
 
+ 
+  const barbershop = smtpConfig.user;
+
+
+  res.status(200).send();
+
   const transporter = await nodeMailer.createTransport({
     host: smtpConfig.host,
     port: smtpConfig.port,
@@ -126,7 +137,6 @@ try {
       pass: smtpConfig.pass,
     },
   });
-  const barbershop = smtpConfig.user;
 
   await transporter.sendMail({
     text: `Oi, ${checkedUser.name} tudo bem? Esatmos passando para informar que sua senha foi redefinida com sucesso`,
@@ -134,8 +144,6 @@ try {
     from: barbershop,
     to: `${checkedUser.email}`,
   });
-
-  res.status(200).json("ok");
 
 } catch (error) {
 
