@@ -22,7 +22,6 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.10.0",
     "nodemailer": "^6.9.1",
-    "nodemon": "^2.0.22",
     "tsup": "^6.7.0"
   }
 }
